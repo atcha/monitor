@@ -1,13 +1,16 @@
 let instance;
 
 class ConfigurationStore {
-  _
-
   constructor() {
     if (instance) {
       return instance;
     }
-    this.state = {};
+    this.state = {
+      activateElasticSearch: false,
+      elasticSearch: {},
+      javaFilters: [],
+      npmFilters: []
+    };
     instance = this;
   }
 
@@ -32,7 +35,7 @@ class ConfigurationStore {
     return fetch('/api/configuration')
       .then(res => res.json())
       .then(content => {
-        this._state = content;
+        this.state = content;
         return this.state;
       });
   }
@@ -47,6 +50,13 @@ class ConfigurationStore {
         this.state = configuration;
         return this.state;
       });
+  }
+
+  resetElasticSearch() {
+    return fetch('/api/configuration/db/es', {
+      method: 'PUT',
+    })
+      .then(res => res.json());
   }
 }
 

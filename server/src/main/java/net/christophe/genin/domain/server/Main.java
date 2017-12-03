@@ -12,6 +12,7 @@ public class Main extends Launcher {
 
     public static void main(String[] args) {
         try {
+            System.setProperty("es.set.netty.runtime.available.processors", "false");
             LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
             new Main().dispatch(
                     args

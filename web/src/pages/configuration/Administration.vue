@@ -1,6 +1,26 @@
 <template>
   <div class="administration-page">
     <div>
+      <h6>Base de données</h6>
+    </div>
+    <div>
+      <div>
+        <q-toggle v-model="activateElasticSearch" :value="true" color="teal-8" label="Elastic Search"></q-toggle>
+      </div>
+      <div v-if="activateElasticSearch" class="row">
+        <div class="col es-input">
+          <q-input type="text" v-model="elasticSearch.host" float-label="Host of elastic search"/>
+        </div>
+        <div class="col es-input">
+          <q-input type="number" v-model="elasticSearch.port" float-label="Port of elastic search"/>
+
+        </div>
+      </div>
+    </div>
+    <div>
+      <h6>Filtress</h6>
+    </div>
+    <div>
       <p class="caption">Filtres sur les librairies Java : </p>
       <q-chips-input color="green" v-model="javaFilters" placeholder="Ajouter un nouveau filtre"></q-chips-input>
     </div>
@@ -21,28 +41,37 @@
   </div>
 </template>
 <script>
-  import {QChipsInput, QBtn} from 'quasar';
+  import {QChipsInput, QBtn, QToggle, QInput} from 'quasar';
   import {success, error} from '../../Toasts'
   import ConfigurationStore from '../../stores/ConfigurationStore';
 
   export default {
     name: 'ConfigurationAdministration',
-    components: {QChipsInput, QBtn},
+    components: {QChipsInput, QBtn, QToggle, QInput},
     data() {
       return {
+        activateElasticSearch: false,
+        elasticSearch: {},
         javaFilters: [],
         npmFilters: []
       }
     },
     methods: {
       refresh() {
-        const {javaFilters, npmFilters} = ConfigurationStore;
+        const {javaFilters, npmFilters, activateElasticSearch, elasticSearch} = ConfigurationStore.state;
         this.javaFilters = javaFilters;
-        this.npmFilters = npmFilters
+        this.npmFilters = npmFilters;
+        this.activateElasticSearch = activateElasticSearch;
+        this.elasticSearch = elasticSearch;
       },
       save() {
-        const {javaFilters, npmFilters} = this;
-        const configuration = Object.assign({}, ConfigurationStore.state, {javaFilters, npmFilters});
+        const {javaFilters, npmFilters, activateElasticSearch, elasticSearch} = this;
+        const configuration = Object.assign({}, ConfigurationStore.state, {
+          javaFilters,
+          npmFilters,
+          activateElasticSearch,
+          elasticSearch
+        });
         ConfigurationStore.save(configuration)
           .then(() => success())
           .catch((err) => error(err));
@@ -60,6 +89,10 @@
 <style scoped>
   .administration-page {
     margin-top: 2em;
+  }
+
+  .administration-page .es-input {
+    padding: 5px;
   }
 
   .administration-page .buttons {

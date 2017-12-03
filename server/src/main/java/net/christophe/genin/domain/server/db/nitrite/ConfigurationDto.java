@@ -1,20 +1,13 @@
-package net.christophe.genin.domain.server.db;
+package net.christophe.genin.domain.server.db.nitrite;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import net.christophe.genin.domain.server.json.Jsons;
 import org.dizitart.no2.objects.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class ConfigurationDto implements Serializable {
-
-
-
 
     @Id
     private long confId = 0L;
@@ -22,6 +15,10 @@ public class ConfigurationDto implements Serializable {
 
     private List<String> javaFilters = new ArrayList<>();
     private List<String> npmFilters = new ArrayList<>();
+    private Boolean activateElasticSearch = false;
+    private String esHost;
+    private Integer esPort;
+
 
     public long getConfId() {
         return confId;
@@ -35,6 +32,30 @@ public class ConfigurationDto implements Serializable {
         return javaFilters;
     }
 
+    public Boolean getActivateElasticSearch() {
+        return activateElasticSearch;
+    }
+
+    public void setActivateElasticSearch(Boolean activateElasticSearch) {
+        this.activateElasticSearch = activateElasticSearch;
+    }
+
+    public String getEsHost() {
+        return esHost;
+    }
+
+    public void setEsHost(String esHost) {
+        this.esHost = esHost;
+    }
+
+    public Integer getEsPort() {
+        return esPort;
+    }
+
+    public void setEsPort(Integer esPort) {
+        this.esPort = esPort;
+    }
+
     public void setJavaFilters(List<String> javaFilters) {
         this.javaFilters = javaFilters;
     }
@@ -46,4 +67,6 @@ public class ConfigurationDto implements Serializable {
     public void setNpmFilters(List<String> npmFilters) {
         this.npmFilters = npmFilters;
     }
+
+
 }

@@ -6,14 +6,13 @@ import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
-import net.christophe.genin.domain.server.InitializeDb;
 import net.christophe.genin.domain.server.command.ConfigurationCommand;
 import net.christophe.genin.domain.server.command.Import;
 import net.christophe.genin.domain.server.command.Reset;
+import net.christophe.genin.domain.server.db.InitializeDb;
 import net.christophe.genin.domain.server.query.Configuration;
 import net.christophe.genin.domain.server.query.Endpoints;
 import net.christophe.genin.domain.server.query.Projects;
@@ -96,6 +95,8 @@ public class Services {
             final JsonObject body = rc.getBodyAsJson();
             new Https.EbCaller(vertx, rc).created(Import.IMPORT, body);
         });
+        router.put("/db/es").handler(rc -> new Https.EbCaller(vertx, rc).jsonAndReply(ConfigurationCommand.ELASTICSEARCH_RESET));
+
         router.get("/").handler(
                 rc -> new Https.EbCaller(vertx, rc).jsonAndReply(Configuration.GET)
         );

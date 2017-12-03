@@ -12,7 +12,7 @@ public class Reset extends AbstractVerticle {
 
 
     private static final Logger logger = LoggerFactory.getLogger(Reset.class);
-    public static final String RUN = Reset.class.getName() + ".run";
+    public static final String RUN = Reset.class.getName() + ".createIfNotExists";
 
 
     @Override

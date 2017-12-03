@@ -1,7 +1,10 @@
 package net.christophe.genin.domain.server.db;
 
 import io.vertx.core.json.JsonObject;
+import net.christophe.genin.domain.server.db.nitrite.ConfigurationDto;
 import net.christophe.genin.domain.server.json.Jsons;
+
+import java.util.Objects;
 
 /**
  * description of the datas.
@@ -16,12 +19,19 @@ public final class Schemas {
     public static class Configuration {
 
         public static JsonObject toJson(ConfigurationDto configurationDto) {
+            JsonObject elasticSearch = (Objects.isNull(configurationDto.getEsHost())) ? new JsonObject()
+                    : new JsonObject()
+                    .put("host", configurationDto.getEsHost())
+                    .put("port", configurationDto.getEsPort());
+
             return new JsonObject()
                     .put("id", configurationDto.getConfId())
                     .put("javaFilters", configurationDto.getJavaFilters()
                             .parallelStream().collect(Jsons.Collectors.toJsonArray()))
                     .put("npmFilters", configurationDto.getNpmFilters()
-                            .parallelStream().collect(Jsons.Collectors.toJsonArray()));
+                            .parallelStream().collect(Jsons.Collectors.toJsonArray()))
+                    .put("activateElasticSearch", Boolean.TRUE.equals(configurationDto.getActivateElasticSearch()))
+                    .put("elasticSearch", elasticSearch);
         }
 
         @SuppressWarnings("unchecked")
@@ -30,6 +40,10 @@ public final class Schemas {
             configurationDto.setConfId(obj.getLong("id", 0L));
             configurationDto.setJavaFilters(Jsons.builder(obj.getJsonArray("javaFilters")).toListString());
             configurationDto.setNpmFilters(Jsons.builder(obj.getJsonArray("npmFilters")).toListString());
+            configurationDto.setActivateElasticSearch(obj.getBoolean("activateElasticSearch", false));
+            JsonObject elasticSearch = obj.getJsonObject("elasticSearch", new JsonObject());
+            configurationDto.setEsHost(elasticSearch.getString("host"));
+            configurationDto.setEsPort(elasticSearch.getInteger("port"));
             return configurationDto;
         }
     }
@@ -92,7 +106,7 @@ public final class Schemas {
     }
 
     public enum Version {
-        id, name, isSnapshot, tables, javaDeps, npmDeps, latestUpdate,apis, changelog;
+        id, name, isSnapshot, tables, javaDeps, npmDeps, latestUpdate, apis, changelog;
 
         public static final String PREFIX = "version/";
 

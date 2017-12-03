@@ -3,7 +3,7 @@ package net.christophe.genin.domain.server.query;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import net.christophe.genin.domain.server.db.ConfigurationDto;
+import net.christophe.genin.domain.server.db.nitrite.ConfigurationDto;
 import net.christophe.genin.domain.server.db.nitrite.Dbs;
 import net.christophe.genin.domain.server.db.Schemas;
 
@@ -27,14 +27,18 @@ public class Configuration extends AbstractVerticle {
                 ));
         vertx.eventBus().consumer(GET,
                 msg -> {
-                    ConfigurationDto conf = Optional.ofNullable(Dbs.instance
-                            .repository(ConfigurationDto.class)
-                            .find().firstOrDefault())
-                            .orElseGet(ConfigurationDto::new);
+                    ConfigurationDto conf = get();
                     msg.reply(Schemas.Configuration.toJson(conf));
                 }
 
         );
         logger.info("started");
+    }
+
+    public static ConfigurationDto get() {
+        return Optional.ofNullable(Dbs.instance
+                .repository(ConfigurationDto.class)
+                .find().firstOrDefault())
+                .orElseGet(ConfigurationDto::new);
     }
 }
